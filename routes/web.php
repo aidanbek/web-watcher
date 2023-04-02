@@ -14,19 +14,26 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    $pages = (new \Ditcher\HttpContentExtractor())->extract();
-
-
+    $pages = (new \Ditcher\Test())->test();
+    dd(
+        parse_url(collect($pages)->map->href[0])
+    );
     $indenter = new \Gajus\Dindent\Indenter();
 
+//    $clean = preg_replace('/\s+/', '', $pages[0]['html']);
 
-    $pages = $indenter->indent($pages);
+//    dd(
+//        Hash::make($clean),
+//        Hash::make($pages[0]['html'])
+//    );
 
-    $diff = (new \Ditcher\StringDiffCalculator())->calculate(
-        old: $pages,
-        new: $pages
+//    echo $indenter->indent($pages[0]['html']);
+
+//    return;
+    $diff = (new \Ditcher\PlainTextDiffCalculator())->calculate(
+        $indenter->indent($pages[0]['html']),
+        $indenter->indent('<br>'.$pages[0]['html'].'<br>')
     );
 
-    dd($diff);
-
+    echo    $diff;
 });
