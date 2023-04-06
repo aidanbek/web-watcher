@@ -31,6 +31,13 @@ class ResourceDump extends Model
 {
     protected $table = 'resource_dumps';
 
+    protected $fillable = [
+      'resource_id',
+      'html',
+      'hash',
+      'pretty_html',
+    ];
+
     public function resource(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(ResourceDump::class, 'id', 'resource_id');

@@ -20,9 +20,11 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Resource whereParentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Resource whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Resource whereUrl($value)
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Resource> $children
  * @property-read int|null $children_count
  * @property-read Resource|null $parent
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Resource> $children
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ResourceDump> $dumps
+ * @property-read int|null $dumps_count
  * @mixin \Eloquent
  */
 class Resource extends Model
@@ -37,5 +39,10 @@ class Resource extends Model
     public function children(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Resource::class, 'parent_id', 'id');
+    }
+
+    public function dumps()
+    {
+        return $this->hasMany(ResourceDump::class, 'resource_id', 'id');
     }
 }
