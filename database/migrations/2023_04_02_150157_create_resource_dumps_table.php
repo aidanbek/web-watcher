@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('resource_dumps', function (Blueprint $table) {
             $table->id();
             $table->foreignId('resource_id');
-            $table->text('html');
-            $table->text('pretty_html');
+            $table->longText('html');
+            $table->longText('pretty_html');
             $table->string('hash');
             $table->timestamps();
         });

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('resources', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('parent_id');
+            $table->foreignId('parent_id')->nullable()->default(null);
             $table->text('url');
             $table->timestamps();
         });
