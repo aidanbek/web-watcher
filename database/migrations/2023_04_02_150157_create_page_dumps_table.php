@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('resources', function (Blueprint $table) {
+        Schema::create('page_dumps', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('parent_id')->nullable()->default(null);
-            $table->text('url');
+            $table->foreignId('page_id');
+            $table->longText('html');
+            $table->longText('pretty_html');
+            $table->string('hash');
             $table->timestamps();
         });
     }
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('resources');
+        Schema::dropIfExists('resource_dumps');
     }
 };

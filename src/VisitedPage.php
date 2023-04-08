@@ -11,7 +11,8 @@ class VisitedPage
         private readonly string     $html,
         private readonly string     $prettyHtml,
         private readonly string     $hash,
-        private readonly Collection $children
+        private readonly ?string     $parentUrl,
+        private readonly Collection $childrenLinks
     )
     {
     }
@@ -27,11 +28,16 @@ class VisitedPage
     }
 
     /**
-     * @return Collection<string, VisitedPage>
+     * @return Collection<string>
      */
-    public function getChildren(): Collection
+    public function getChildrenLinks(): Collection
     {
-        return $this->children;
+        return $this->childrenLinks;
+    }
+
+    public function getParentUrl(): ?string
+    {
+        return $this->parentUrl;
     }
 
     /**

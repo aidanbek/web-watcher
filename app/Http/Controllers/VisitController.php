@@ -18,11 +18,9 @@ class VisitController extends Controller
     {
         $url = 'https://epayment.kz/ru/docs';
 
-        $visitedPage = $this->visitor->visit($url);
+        $visitedPages = $this->visitor->visitRecursively($url);
+        $this->pageService->createPageTree($visitedPages);;
 
-        $resources = $this->pageService->createResourcesFromVisitedPage($visitedPage);
-        dd(
-            $resources
-        );
+        dd('success');
     }
 }

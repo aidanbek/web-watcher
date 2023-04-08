@@ -2,31 +2,35 @@
 
 namespace Ditcher;
 
-use App\Models\Resource;
-use Illuminate\Support\Collection;
+use App\Models\Page;
 
 class PageService
 {
     /**
-     * @param VisitedPage $visitedPage
-     * @param $parent
+     * @param string $url
+     * @return Page
      */
-    public function createResourcesFromVisitedPage(VisitedPage $visitedPage, $parent = null): void
+    public function firstOrCreate(string $url): Page
     {
-        $resource = new Resource();
-        $resource->url = $visitedPage->getUrl();
-        $resource->parent_id = $parent;
-        $resource->save();
-        $resource->dumps()->create(
-            [
-                'html'        => $visitedPage->getHtml(),
-                'pretty_html' => $visitedPage->getPrettyHtml(),
-                'hash'        => $visitedPage->getHash()
-            ]
-        );
+        return Page::firstOrCreate(['url' => $url]);
+    }
 
-        foreach ($visitedPage->getChildren() as $child) {
-            $this->createResourcesFromVisitedPage($child, $resource->id);
+    public function createPageTree(VisitedPageCollection $visitedPages)
+    {
+        $pages = [];
+
+        foreach ($visitedPages->all() as $visitedPage) {
+            $pages[$visitedPage->getUrl()] = $this->firstOrCreate($visitedPage->getUrl());
         }
+
+        foreach ($visitedPages->all() as $visitedPage) {
+            if ($visitedPage->getParentUrl()) {
+                $page = $pages[$visitedPage->getUrl()];
+                $page->parent_id = $pages[$visitedPage->getParentUrl()]->id;
+                $page->save();
+            }
+        }
+
+        return $pages;
     }
 }

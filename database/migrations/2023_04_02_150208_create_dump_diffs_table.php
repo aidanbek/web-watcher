@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('dump_diffs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('resource_old_dump_id');
-            $table->foreignId('resource_new_dump_id');
+            $table->foreignId('page_old_dump_id');
+            $table->foreignId('page_new_dump_id');
             $table->text('html');
             $table->text('json');
             $table->timestamps();
