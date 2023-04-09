@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Ditcher\PageService;
 use Ditcher\Visitor;
+use Gajus\Dindent\Exception\RuntimeException;
 
 class VisitController extends Controller
 {
@@ -14,13 +15,16 @@ class VisitController extends Controller
     {
     }
 
+    /**
+     * @throws RuntimeException
+     */
     public function test()
     {
         $url = 'https://epayment.kz/ru/docs';
 
-        $visitedPages = $this->visitor->visitRecursively($url);
-        $this->pageService->createPageTree($visitedPages);;
+        $visitedPages = $this->visitor->visitNested($url);
+        $pages = $this->pageService->createPageTree($visitedPages);
 
-        dd('success');
+        dd($pages);
     }
 }

@@ -16,6 +16,16 @@ class VisitedPageCollection
         $this->items = $visitedPages;
     }
 
+    public function add(VisitedPage $page): void
+    {
+        $this->items[] = $page;
+    }
+
+    public function merge(VisitedPageCollection $collection): VisitedPageCollection
+    {
+        return new VisitedPageCollection(...$this->items, ...$collection->all());
+    }
+
     public function all(): array
     {
         return $this->items;

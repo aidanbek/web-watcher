@@ -51,16 +51,19 @@ class Visitor
         );
     }
 
-    public function visitRecursively(string $url): VisitedPageCollection
+    /**
+     * @throws RuntimeException
+     */
+    public function visitNested(string $url, ?string $parentUrl = null): VisitedPageCollection
     {
-        $accumulator = [];
-        $visited = $this->visit($url);
-        $accumulator[] = $visited;
+        $accumulator = new VisitedPageCollection();
+        $visited = $this->visit($url, $parentUrl);
+        $accumulator->add($visited);
 
         foreach ($visited->getChildrenLinks() as $childrenLink) {
-            $accumulator[] = $this->visit($childrenLink, $url);
+            $accumulator = $accumulator->merge($this->visitNested($childrenLink, $url));
         }
 
-        return new VisitedPageCollection(...$accumulator);
+        return $accumulator;
     }
 }

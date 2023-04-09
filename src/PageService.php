@@ -15,7 +15,7 @@ class PageService
         return Page::firstOrCreate(['url' => $url]);
     }
 
-    public function createPageTree(VisitedPageCollection $visitedPages)
+    public function createPageTree(VisitedPageCollection $visitedPages): array
     {
         $pages = [];
 
