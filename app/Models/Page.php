@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PageDump> $dumps
  * @property-read int|null $dumps_count
  * @property-read Page|null $parent
+ * @method static \Illuminate\Database\Eloquent\Builder|Page parents()
  * @method static \Illuminate\Database\Eloquent\Builder|Page newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Page newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Page query()
@@ -46,5 +47,10 @@ class Page extends Model
     public function dumps()
     {
         return $this->hasMany(PageDump::class, 'page_id', 'id');
+    }
+
+    public function scopeParents($q)
+    {
+        return $q->whereNull('parent_id');
     }
 }
