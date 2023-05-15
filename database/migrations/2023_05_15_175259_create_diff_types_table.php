@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dump_diffs', function (Blueprint $table) {
+        Schema::create('diff_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('page_old_dump_id');
-            $table->foreignId('page_new_dump_id');
-            $table->foreignId('diff_type_id');
-            $table->text('html');
-            $table->text('json');
+            $table->string('title');
             $table->timestamps();
         });
     }
@@ -27,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dump_diffs');
+        Schema::dropIfExists('diff_types');
     }
 };
