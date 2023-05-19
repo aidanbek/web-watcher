@@ -59,7 +59,12 @@ class PlainTextDiffCalculator
                     $diff->diff_type_id = null; // todo
 
                 } else {
-                    $result = $this->calculate($old->pretty_html,$new->pretty_html);
+                    $result = $this->calculate(
+                        htmlspecialchars_decode($old->pretty_html),
+                        htmlspecialchars_decode($new->pretty_html)
+                    );
+                    echo $result;
+                    exit();
                     dd($result);
                 }
 
