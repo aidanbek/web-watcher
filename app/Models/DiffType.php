@@ -31,4 +31,6 @@ class DiffType extends Model
 
     public const NO_CHANGES = 1;
     public const HAS_CHANGES = 2;
+    public const PAGE_DELETED = 3;
+    public const PAGE_RESTORED = 4;
 }

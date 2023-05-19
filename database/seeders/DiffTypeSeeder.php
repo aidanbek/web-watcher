@@ -22,6 +22,14 @@ class DiffTypeSeeder extends Seeder
                 'id' => 2,
                 'title' => 'Есть изменения'
             ],
+            [
+                'id' => 3,
+                'title' => 'Страница удалена'
+            ],
+            [
+                'id' => 4,
+                'title' => 'Страница восстановлена'
+            ],
         ];
 
         foreach($rows as $row) {
