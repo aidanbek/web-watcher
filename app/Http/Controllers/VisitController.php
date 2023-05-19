@@ -21,7 +21,7 @@ class VisitController extends Controller
     }
 
     /**
-     * @throws RuntimeException
+     * @throws RuntimeException|\Throwable
      */
     public function test()
     {
@@ -37,8 +37,7 @@ class VisitController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
+            throw $e;
         }
-
-
     }
 }
