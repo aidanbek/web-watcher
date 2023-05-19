@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PageDump;
 use Ditcher\PageDumpService;
 use Ditcher\PageService;
+use Ditcher\PlainTextDiffCalculator;
 use Ditcher\Visitor;
 use Gajus\Dindent\Exception\RuntimeException;
+use Illuminate\Support\Facades\DB;
 
 class VisitController extends Controller
 {
     public function __construct(
-        private readonly Visitor     $visitor,
-        private readonly PageService $pageService,
-        private readonly PageDumpService $dumpService
+        private readonly Visitor                 $visitor,
+        private readonly PageService             $pageService,
+        private readonly PageDumpService         $dumpService,
+        private readonly PlainTextDiffCalculator $calculator
     )
     {
     }
@@ -24,12 +26,19 @@ class VisitController extends Controller
     public function test()
     {
         $url = 'https://epayment.kz/ru/docs';
-//        $url = 'https://nuxtjs.org/docs';
 
-        $visitedPages = $this->visitor->visitNested($url);
-        $pages = $this->pageService->createPageTree($visitedPages);
-        $dumps = $this->dumpService->dumpPageCollection($visitedPages);
+        DB::beginTransaction();
+        try {
+            $visitedPages = $this->visitor->visitNested($url);
+            $pages = $this->pageService->createPageTree($visitedPages);
+            $this->dumpService->dumpPageCollection($visitedPages);
+            $this->calculator->calculateDiffForPagesDumps($pages);
 
-        dd($dumps);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+        }
+
+
     }
 }

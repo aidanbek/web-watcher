@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read int|null $children_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PageDump> $dumps
  * @property-read int|null $dumps_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PageDump> $lastTwoDumps
+ * @property-read int|null $last_two_dumps_count
  * @property-read Page|null $parent
  * @method static \Illuminate\Database\Eloquent\Builder|Page parents()
  * @method static \Illuminate\Database\Eloquent\Builder|Page newModelQuery()
@@ -46,7 +48,12 @@ class Page extends Model
 
     public function dumps()
     {
-        return $this->hasMany(PageDump::class, 'page_id', 'id');
+        return $this->hasMany(PageDump::class, 'page_id', 'id')->latest();
+    }
+
+    public function lastTwoDumps()
+    {
+        return $this->dumps()->limit(2);
     }
 
     public function scopeParents($q)

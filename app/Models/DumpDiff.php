@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $page_old_dump_id
  * @property int $page_new_dump_id
  * @property int $diff_type_id
- * @property string $html
- * @property string $json
+ * @property string|null $html
+ * @property string|null $json
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\PageDump|null $newDump
