@@ -28,4 +28,7 @@ class DiffType extends Model
     protected $fillable = [
       'title',
     ];
+
+    public const NO_CHANGES = 1;
+    public const HAS_CHANGES = 2;
 }

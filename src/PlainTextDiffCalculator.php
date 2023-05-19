@@ -2,6 +2,7 @@
 
 namespace Ditcher;
 
+use App\Models\DiffType;
 use App\Models\DumpDiff;
 use App\Models\Page;
 use App\Models\PageDump;
@@ -75,16 +76,17 @@ class PlainTextDiffCalculator
                 $diff = new DumpDiff();
                 $diff->page_old_dump_id = $oldDump->id;
                 $diff->page_new_dump_id = $newDump->id;
-                $diff->diff_type_id = null;// todo
 
                 if ($oldDump->hash === $newDump->hash) {
                     $diff->html = null;
                     $diff->json = null;
+                    $diff->diff_type_id = DiffType::NO_CHANGES;
                 } else {
                     $oldPrettyHtml = htmlspecialchars_decode($oldDump->pretty_html);
                     $newPrettyHtml = htmlspecialchars_decode($newDump->pretty_html);
                     $diff->json = $this->calculateJson($oldPrettyHtml, $newPrettyHtml);
                     $diff->html = $this->calculateHtml($oldPrettyHtml, $newPrettyHtml);
+                    $diff->diff_type_id = DiffType::HAS_CHANGES;
                 }
 
                 $diff->save();
