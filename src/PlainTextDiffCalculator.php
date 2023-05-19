@@ -10,7 +10,7 @@ use Jfcherng\Diff\Renderer\RendererConstant;
 
 class PlainTextDiffCalculator
 {
-    public function calculate(string $old, string $new): string
+    public function calculateJson(string $old, string $new): string
     {
         $differOptions = [
             'context'          => 1,
@@ -33,6 +33,29 @@ class PlainTextDiffCalculator
         );
     }
 
+    public function calculateHtml(string $old, string $new): string
+    {
+        $differOptions = [
+            'context'          => 1,
+            'ignoreCase'       => false,
+            'ignoreLineEnding' => false,
+            'ignoreWhitespace' => false,
+        ];
+
+        $rendererOptions = [
+            'cliColorization' => RendererConstant::CLI_COLOR_AUTO,
+            'detailLevel'     => 'char'
+        ];
+
+        return DiffHelper::calculate(
+            old            : $old,
+            new            : $new,
+            renderer       : 'SideBySide',
+            differOptions  : $differOptions,
+            rendererOptions: $rendererOptions
+        );
+    }
+
 
     /**
      * @param Page[] $pages
@@ -44,28 +67,24 @@ class PlainTextDiffCalculator
             $page->load('lastTwoDumps');
 
             if ($page->lastTwoDumps->count() === 2) {
-                /** @var PageDump $old */
-                $old = $page->lastTwoDumps[1];
-                /** @var PageDump $new */
-                $new = $page->lastTwoDumps[0];
+                /** @var PageDump $oldDump */
+                $oldDump = $page->lastTwoDumps[1];
+                /** @var PageDump $newDump */
+                $newDump = $page->lastTwoDumps[0];
 
                 $diff = new DumpDiff();
-                $diff->page_old_dump_id = $old->id;
-                $diff->page_new_dump_id = $new->id;
+                $diff->page_old_dump_id = $oldDump->id;
+                $diff->page_new_dump_id = $newDump->id;
+                $diff->diff_type_id = null;// todo
 
-                if ($old->hash === $new->hash) {
+                if ($oldDump->hash === $newDump->hash) {
                     $diff->html = null;
                     $diff->json = null;
-                    $diff->diff_type_id = null; // todo
-
                 } else {
-                    $result = $this->calculate(
-                        htmlspecialchars_decode($old->pretty_html),
-                        htmlspecialchars_decode($new->pretty_html)
-                    );
-                    echo $result;
-                    exit();
-                    dd($result);
+                    $oldPrettyHtml = htmlspecialchars_decode($oldDump->pretty_html);
+                    $newPrettyHtml = htmlspecialchars_decode($newDump->pretty_html);
+                    $diff->json = $this->calculateJson($oldPrettyHtml, $newPrettyHtml);
+                    $diff->html = $this->calculateHtml($oldPrettyHtml, $newPrettyHtml);
                 }
 
                 $diff->save();
