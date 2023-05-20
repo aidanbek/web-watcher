@@ -10,21 +10,25 @@ class PageController extends Controller
     public function index()
     {
         $pages = Page::parents()
+            ->with('lastDump')
             ->withCount('children')
-            ->orderBy('url')
+            ->orderBy('title')
             ->get();
 
-        return Inertia::render('Pages/Index', [
-            'pages' => $pages,
-        ]);
+        return Inertia::render('Pages/Index', ['pages' => $pages,]);
     }
 
     public function show($id)
     {
-        $page = Page::withCount('children')->firstOrFail($id);
+        $page = Page::query()
+            ->with(['children' => function ($q) {
+                $q
+                    ->withCount('children')
+                    ->with('lastDump');
+            }])
+            ->with('lastDump')
+            ->findOrFail($id);
 
-        return Inertia::render('Pages/Show', [
-            'page' => $page,
-        ]);
+        return Inertia::render('Pages/Show', ['page' => $page,]);
     }
 }

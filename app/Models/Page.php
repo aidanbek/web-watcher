@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read int|null $children_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PageDump> $dumps
  * @property-read int|null $dumps_count
+ * @property-read \App\Models\PageDump|null $lastDump
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PageDump> $lastTwoDumps
  * @property-read int|null $last_two_dumps_count
  * @property-read Page|null $parent
@@ -47,15 +48,20 @@ class Page extends Model
 
     public function children(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(Page::class, 'parent_id', 'id');
+        return $this->hasMany(Page::class, 'parent_id', 'id')->orderBy('title');
     }
 
-    public function dumps()
+    public function dumps(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(PageDump::class, 'page_id', 'id')->latest();
     }
 
-    public function lastTwoDumps()
+    public function lastDump(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(PageDump::class, 'page_id', 'id')->latest();
+    }
+
+    public function lastTwoDumps(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->dumps()->limit(2);
     }
