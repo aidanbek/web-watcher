@@ -8,6 +8,7 @@ class VisitedPage
 {
     public function __construct(
         private readonly string     $url,
+        private readonly string     $title,
         private readonly string     $html,
         private readonly string     $prettyHtml,
         private readonly string     $hash,
@@ -20,6 +21,11 @@ class VisitedPage
     public function getUrl(): string
     {
         return $this->url;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
     }
 
     public function getHtml(): string

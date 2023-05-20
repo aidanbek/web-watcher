@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Models\Page
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int|null $parent_id
  * @property string $url
+ * @property string $title
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Page> $children
@@ -32,9 +34,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Page extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'pages';
 
-    protected $fillable = ['url'];
+    protected $fillable = ['url', 'title'];
 
     public function parent(): \Illuminate\Database\Eloquent\Relations\HasOne
     {

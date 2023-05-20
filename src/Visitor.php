@@ -32,6 +32,10 @@ class Visitor
     {
         $page = $this->client->request('GET', $url);
 
+        $title = $page->filter('title')->count()
+            ? $page->filter('title')->text()
+            : '';
+
         $childrenLinks = new Collection(
             $page
                 ->filter($this->getFilterSelector($url))
@@ -42,6 +46,7 @@ class Visitor
 
         return new VisitedPage(
             url          : $url,
+            title        : $title,
             html         : $html,
             prettyHtml   : $this->indenter->indent($html),
             hash         : $this->hashManager->make($html),

@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('parent_id')->nullable()->default(null);
             $table->text('url');
+            $table->string('title');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

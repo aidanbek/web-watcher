@@ -15,6 +15,7 @@
                         <thead>
                         <tr>
                             <th class="border">URL</th>
+                            <th class="border">Title</th>
                             <th class="border">Count</th>
                         </tr>
                         </thead>
@@ -22,6 +23,9 @@
                         <tr v-for="page in pages">
                             <td class="border">
                                 <Link :href="route('pages.show', page.id)"> {{ decodeURI(page.url) }}</Link>
+                            </td>
+                            <td class="border">
+                                {{ page.title }}
                             </td>
                             <td class="border text-center">
                                 {{ page.children_count }}

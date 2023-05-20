@@ -10,9 +10,12 @@ class PageService
      * @param string $url
      * @return Page
      */
-    public function firstOrCreate(string $url): Page
+    public function firstOrCreate(string $url, string $title): Page
     {
-        return Page::firstOrCreate(['url' => $url]);
+        return Page::firstOrCreate(
+            ['url' => $url],
+            ['title' => $title]
+        );
     }
 
     public function createPageTree(VisitedPageCollection $visitedPages): array
@@ -20,7 +23,10 @@ class PageService
         $pages = [];
 
         foreach ($visitedPages->all() as $visitedPage) {
-            $pages[$visitedPage->getUrl()] = $this->firstOrCreate($visitedPage->getUrl());
+            $pages[$visitedPage->getUrl()] = $this->firstOrCreate(
+                url  : $visitedPage->getUrl(),
+                title: $visitedPage->getTitle()
+            );
         }
 
         foreach ($visitedPages->all() as $visitedPage) {
