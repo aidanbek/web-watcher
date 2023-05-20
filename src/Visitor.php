@@ -39,13 +39,12 @@ class Visitor
         );
 
         $html = $page->html();
-        $clean = preg_replace('/\s+/', '', $html);
 
         return new VisitedPage(
             url          : $url,
             html         : $html,
             prettyHtml   : $this->indenter->indent($html),
-            hash         : $this->hashManager->make($clean),
+            hash         : $this->hashManager->make($html),
             parentUrl    : $parentUrl,
             childrenLinks: $childrenLinks->filter(fn($link) => $link !== $url)
         );

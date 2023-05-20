@@ -6,11 +6,21 @@ use App\Models\DiffType;
 use App\Models\DumpDiff;
 use App\Models\Page;
 use App\Models\PageDump;
+use Illuminate\Hashing\HashManager;
 use Jfcherng\Diff\DiffHelper;
 use Jfcherng\Diff\Renderer\RendererConstant;
 
 class PlainTextDiffCalculator
 {
+    public function __construct(
+        private readonly HashManager $hashManager,
+    )
+    {
+    }
+
+    private const EMPTY_HTML = '';
+    private const EMPTY_JSON = [];
+
     public function calculateJson(string $old, string $new): string
     {
         $differOptions = [
@@ -77,9 +87,11 @@ class PlainTextDiffCalculator
                 $diff->page_old_dump_id = $oldDump->id;
                 $diff->page_new_dump_id = $newDump->id;
 
-                if ($oldDump->hash === $newDump->hash) {
-                    $diff->html = null;
-                    $diff->json = null;
+                $oldHtml = htmlspecialchars_decode($oldDump->html);
+
+                if ($this->hashManager->check($oldHtml, $newDump->hash)) {
+                    $diff->html = PlainTextDiffCalculator::EMPTY_HTML;
+                    $diff->json = PlainTextDiffCalculator::EMPTY_JSON;
                     $diff->diff_type_id = DiffType::NO_CHANGES;
                 } else {
                     $oldPrettyHtml = htmlspecialchars_decode($oldDump->pretty_html);

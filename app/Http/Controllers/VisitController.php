@@ -25,7 +25,7 @@ class VisitController extends Controller
      */
     public function test()
     {
-        $url = 'https://epayment.kz/ru/docs';
+        $url = 'https://epayment.kz/docs';
 
         DB::beginTransaction();
         try {
