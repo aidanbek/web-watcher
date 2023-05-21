@@ -1,5 +1,5 @@
 <template>
-  <table class="table-auto border-collapse border">
+  <table class="table-auto border-collapse border w-full">
     <thead>
     <tr>
       <th class="border">Title</th>
@@ -19,7 +19,7 @@
       <td class="border text-center">
         {{ page.children_count }}
       </td>
-      <td class="border text-center">
+      <td class="border text-center whitespace-nowrap	">
         {{ page.last_dump ? DateTime.fromISO(page.last_dump.created_at).toFormat('dd.MM.yyyy HH:mm:ss') : '-' }}
       </td>
     </tr>
