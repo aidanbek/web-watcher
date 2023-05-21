@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('page_old_dump_id');
             $table->foreignId('page_new_dump_id');
             $table->foreignId('diff_type_id');
-            $table->text('html')->nullable();
-            $table->text('json')->nullable();
+            $table->longText('html')->nullable();
+            $table->longText('json')->nullable();
             $table->timestamps();
         });
     }

@@ -19,7 +19,7 @@ class PlainTextDiffCalculator
     }
 
     private const EMPTY_HTML = '';
-    private const EMPTY_JSON = [];
+    private const EMPTY_JSON = '[]';
 
     public function calculateJson(string $old, string $new): string
     {
@@ -87,17 +87,13 @@ class PlainTextDiffCalculator
                 $diff->page_old_dump_id = $oldDump->id;
                 $diff->page_new_dump_id = $newDump->id;
 
-                $oldHtml = htmlspecialchars_decode($oldDump->html);
-
-                if ($this->hashManager->check($oldHtml, $newDump->hash)) {
+                if ($this->hashManager->check($oldDump->raw_html, $newDump->hash)) {
                     $diff->html = PlainTextDiffCalculator::EMPTY_HTML;
                     $diff->json = PlainTextDiffCalculator::EMPTY_JSON;
                     $diff->diff_type_id = DiffType::NO_CHANGES;
                 } else {
-                    $oldPrettyHtml = htmlspecialchars_decode($oldDump->pretty_html);
-                    $newPrettyHtml = htmlspecialchars_decode($newDump->pretty_html);
-                    $diff->json = $this->calculateJson($oldPrettyHtml, $newPrettyHtml);
-                    $diff->html = $this->calculateHtml($oldPrettyHtml, $newPrettyHtml);
+                    $diff->json = $this->calculateJson($oldDump->raw_pretty_html, $newDump->raw_pretty_html);
+                    $diff->html = $this->calculateHtml($oldDump->raw_pretty_html, $newDump->raw_pretty_html);
                     $diff->diff_type_id = DiffType::HAS_CHANGES;
                 }
 
