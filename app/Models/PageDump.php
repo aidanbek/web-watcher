@@ -44,7 +44,7 @@ class PageDump extends Model
 
     public function resource(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(PageDump::class, 'id', 'resource_id');
+        return $this->hasOne(Page::class, 'id', 'page_id');
     }
 
     public function getRawHtmlAttribute(): string
