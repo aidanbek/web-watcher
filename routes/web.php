@@ -32,6 +32,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/pages', [\App\Http\Controllers\PageController::class, 'index'])->name('pages.index');
     Route::get('/pages/{id}', [\App\Http\Controllers\PageController::class, 'show'])->name('pages.show');
+    Route::get('/pages/{id}/dumps', [\App\Http\Controllers\PageController::class, 'dumps'])->name('pages.id.dumps.index');
+    Route::get('/pages/{id}/dumps/{dumpId}', [\App\Http\Controllers\PageController::class, 'dump'])->name('pages.id.dumps.show');
 });
 
 require __DIR__ . '/auth.php';

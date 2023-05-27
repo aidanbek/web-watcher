@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Page;
+use App\Models\PageDump;
 use Inertia\Inertia;
 
 class PageController extends Controller
@@ -30,5 +31,25 @@ class PageController extends Controller
             ->findOrFail($id);
 
         return Inertia::render('Pages/Show', ['page' => $page,]);
+    }
+
+    public function dumps($id)
+    {
+        $page = Page::findOrFail($id);
+        $dumps = PageDump::where('page_id', $id)
+            ->latest()
+            ->paginate();
+//        dd($dumps);
+
+        return Inertia::render('Pages/Dumps/Index', [
+            'dumps' => $dumps,
+            'page' => $page
+        ]);
+    }
+
+    public function dump($id, $dumpId)
+    {
+        $dump = PageDump::findOrFail($dumpId);
+        return Inertia::render('Pages/Dumps/Index', ['dump' => $dump]);
     }
 }

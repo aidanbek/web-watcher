@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read PageDump|null $resource
+ * @property-read Page $page
  * @method static \Illuminate\Database\Eloquent\Builder|PageDump newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PageDump newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PageDump query()
@@ -55,5 +56,10 @@ class PageDump extends Model
     public function getRawPrettyHtmlAttribute(): string
     {
         return html_entity_decode($this->pretty_html);
+    }
+
+    public function page(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Page::class, 'id', 'page_id');
     }
 }

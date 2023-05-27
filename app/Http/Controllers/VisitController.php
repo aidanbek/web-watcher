@@ -29,7 +29,7 @@ class VisitController extends Controller
 
         DB::beginTransaction();
         try {
-            $visitedPages = $this->visitor->visitNested($url);
+            $visitedPages = $this->visitor->run($url);
             $pages = $this->pageService->createPageTree($visitedPages);
             $this->dumpService->dumpPageCollection($visitedPages);
             $this->calculator->calculateDiffForPagesDumps($pages);
