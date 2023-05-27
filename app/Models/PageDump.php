@@ -34,10 +34,10 @@ class PageDump extends Model
     protected $table = 'page_dumps';
 
     protected $fillable = [
-      'page_id',
-      'html',
-      'hash',
-      'pretty_html',
+        'page_id',
+        'html',
+        'hash',
+        'pretty_html',
     ];
 
     protected $appends = ['raw_html', 'raw_pretty_html'];

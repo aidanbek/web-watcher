@@ -12,12 +12,6 @@ use Jfcherng\Diff\Renderer\RendererConstant;
 
 class PlainTextDiffCalculator
 {
-    public function __construct(
-        private readonly HashManager $hashManager,
-    )
-    {
-    }
-
     private const EMPTY_HTML = '';
     private const EMPTY_JSON = '[]';
 
@@ -87,14 +81,19 @@ class PlainTextDiffCalculator
                 $diff->page_old_dump_id = $oldDump->id;
                 $diff->page_new_dump_id = $newDump->id;
 
-                if ($this->hashManager->check($oldDump->raw_html, $newDump->hash)) {
+                if ($oldDump->hash === $newDump->hash) {
                     $diff->html = PlainTextDiffCalculator::EMPTY_HTML;
                     $diff->json = PlainTextDiffCalculator::EMPTY_JSON;
                     $diff->diff_type_id = DiffType::NO_CHANGES;
                 } else {
                     $diff->json = $this->calculateJson($oldDump->raw_pretty_html, $newDump->raw_pretty_html);
                     $diff->html = $this->calculateHtml($oldDump->raw_pretty_html, $newDump->raw_pretty_html);
-                    $diff->diff_type_id = DiffType::HAS_CHANGES;
+
+                    if ($diff->json === self::EMPTY_JSON || $diff->html === self::EMPTY_HTML) {
+                        $diff->diff_type_id = DiffType::NO_CHANGES;
+                    } else {
+                        $diff->diff_type_id = DiffType::HAS_CHANGES;
+                    }
                 }
 
                 $diff->save();

@@ -23,8 +23,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PageDump> $lastTwoDumps
  * @property-read int|null $last_two_dumps_count
  * @property-read Page|null $parent
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Page> $siblings
- * @property-read int|null $siblings_count
  * @method static \Illuminate\Database\Eloquent\Builder|Page newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Page newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Page onlyTrashed()
@@ -57,18 +55,6 @@ class Page extends Model
     public function children(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Page::class, 'parent_id', 'id')->orderBy('title');
-    }
-
-    public function siblings(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
-    {
-        return $this->belongsToMany(
-          Page::class,
-          PageSibling::class,
-          'page_id',
-          'sibling_page_id',
-          'id',
-          'id' ,
-        );
     }
 
     public function dumps(): \Illuminate\Database\Eloquent\Relations\HasMany

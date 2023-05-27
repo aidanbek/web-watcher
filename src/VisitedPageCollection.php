@@ -16,9 +16,14 @@ class VisitedPageCollection
         $this->items = $visitedPages;
     }
 
-    public function add(VisitedPage $page): void
+    public function has($key): bool
     {
-        $this->items[] = $page;
+        return isset($this->items[$key]);
+    }
+
+    public function put($key, VisitedPage $page): void
+    {
+        $this->items[$key] = $page;
     }
 
     public function merge(VisitedPageCollection $collection): VisitedPageCollection

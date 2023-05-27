@@ -4,70 +4,107 @@ namespace Ditcher;
 
 use Gajus\Dindent\Exception\RuntimeException;
 use Gajus\Dindent\Indenter;
-use Goutte\Client;
-use Illuminate\Hashing\HashManager;
+use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\UriResolver;
 
 class Visitor
 {
+    private VisitedPageCollection $cache;
+
     public function __construct(
-        private readonly Client      $client,
-        private readonly HashManager $hashManager,
-        private readonly Indenter    $indenter
+        private readonly Indenter $indenter,
+        private readonly Factory  $client
     )
     {
     }
 
-    private function getFilterSelector(string $url): string
+    private function getChildrenLinksSelector(string $url): string
     {
         $path = parse_url($url, PHP_URL_PATH);
-        return 'a[href^="' . $path . '"]:not([href="' . $path . '"]),a[href^="' . $url . '"]:not([href="' . $url . '"])';
+        return 'a[href^="' . $path . '"]:not([href="' . $path . '"]), a[href^="' . $url . '"]:not([href="' . $url . '"])';
+    }
+
+    private function getLinksFromPage($url, Crawler $page): Collection
+    {
+        $childrenLinks = $page
+            ->filter($this->getChildrenLinksSelector($url))
+            ->each(fn($link) => UriResolver::resolve($link->attr('href'), $url));
+
+        return collect($childrenLinks)->filter(fn($link) => $link !== $url);
     }
 
     /**
      * @throws RuntimeException
      */
-    public function visit(string $url, ?string $parentUrl = null): VisitedPage
+    private function visit(string $url, ?string $parentUrl = null): VisitedPage
     {
-        $page = $this->client->request('GET', $url);
+        $html = $this->client->get($url)->body();
+        $page = new Crawler($html);
 
         $title = $page->filter('title')->count()
             ? $page->filter('title')->text()
             : '';
 
-        $childrenLinks = new Collection(
-            $page
-                ->filter($this->getFilterSelector($url))
-                ->each(fn($link) => UriResolver::resolve($link->attr('href'), $url))
-        );
-
-        $html = $page->html();
+        $links = $this->getLinksFromPage($url, $page);
 
         return new VisitedPage(
             url          : $url,
             title        : $title,
             html         : $html,
             prettyHtml   : $this->indenter->indent($html),
-            hash         : $this->hashManager->make($html),
+            hash         : crc32($html),
             parentUrl    : $parentUrl,
-            childrenLinks: $childrenLinks->filter(fn($link) => $link !== $url)
+            childrenLinks: $links,
         );
+    }
+
+    private function getCache(): VisitedPageCollection
+    {
+        return $this->cache;
+    }
+
+    private function emptyCache(): void
+    {
+        $this->cache = new VisitedPageCollection();
     }
 
     /**
      * @throws RuntimeException
      */
-    public function visitNested(string $url, ?string $parentUrl = null): VisitedPageCollection
+    private function visitNested(string $url, ?string $parentUrl = null): void
     {
-        $accumulator = new VisitedPageCollection();
-        $visited = $this->visit($url, $parentUrl);
-        $accumulator->add($visited);
+        $decoded = urldecode($url);
 
-        foreach ($visited->getChildrenLinks() as $childrenLink) {
-            $accumulator = $accumulator->merge($this->visitNested($childrenLink, $url));
+        if ($this->getCache()->has($decoded)) {
+            return;
         }
 
-        return $accumulator;
+        Log::info($decoded . ' put to cache');
+        $visited = $this->visit($url, $parentUrl);
+        $this->getCache()->put($decoded, $visited);
+
+        foreach ($visited->getChildrenLinks() as $link) {
+            $this->visitNested($link, $url);
+        }
+    }
+
+    /**
+     * @throws RuntimeException
+     */
+    public function run(string $url): VisitedPageCollection
+    {
+        $this->emptyCache();
+
+
+        $this->visitNested($url);
+
+        $result = $this->getCache();
+
+        $this->emptyCache();
+
+        return $result;
     }
 }
