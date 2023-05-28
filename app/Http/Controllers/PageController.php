@@ -39,7 +39,6 @@ class PageController extends Controller
         $dumps = PageDump::where('page_id', $id)
             ->latest()
             ->paginate();
-//        dd($dumps);
 
         return Inertia::render('Pages/Dumps/Index', [
             'dumps' => $dumps,

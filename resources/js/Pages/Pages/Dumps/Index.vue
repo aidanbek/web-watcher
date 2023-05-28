@@ -5,7 +5,9 @@
 
   <AuthenticatedLayout>
     <template #header>
-      <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dumps</h2>
+      <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        Dumps of {{ page.title }} [{{ decodeURI(page.url) }}]
+      </h2>
     </template>
 
     <div class="py-12">
