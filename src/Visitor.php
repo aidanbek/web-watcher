@@ -21,49 +21,21 @@ class Visitor
     {
     }
 
-    private function getChildrenLinksSelector(string $url): string
-    {
-        $path = parse_url($url, PHP_URL_PATH);
-        return 'a[href^="' . $path . '"]:not([href="' . $path . '"]), a[href^="' . $url . '"]:not([href="' . $url . '"])';
-    }
-
-    private function getLinksFromPage($url, Crawler $page): Collection
-    {
-        $childrenLinks = $page
-            ->filter($this->getChildrenLinksSelector($url))
-            ->each(fn($link) => UriResolver::resolve($link->attr('href'), $url));
-
-        return collect($childrenLinks)->filter(fn($link) => $link !== $url);
-    }
-
     /**
      * @throws RuntimeException
      */
-    private function visit(string $url, ?string $parentUrl = null): VisitedPage
+    public function run(string $url): VisitedPageCollection
     {
-        $html = $this->client->get($url)->body();
-        $page = new Crawler($html);
+        $this->emptyCache();
 
-        $title = $page->filter('title')->count()
-            ? $page->filter('title')->text()
-            : '';
 
-        $links = $this->getLinksFromPage($url, $page);
+        $this->visitNested($url);
 
-        return new VisitedPage(
-            url          : $url,
-            title        : $title,
-            html         : $html,
-            prettyHtml   : $this->indenter->indent($html),
-            hash         : crc32($html),
-            parentUrl    : $parentUrl,
-            childrenLinks: $links,
-        );
-    }
+        $result = $this->getCache();
 
-    private function getCache(): VisitedPageCollection
-    {
-        return $this->cache;
+        $this->emptyCache();
+
+        return $result;
     }
 
     private function emptyCache(): void
@@ -91,20 +63,48 @@ class Visitor
         }
     }
 
+    private function getCache(): VisitedPageCollection
+    {
+        return $this->cache;
+    }
+
     /**
      * @throws RuntimeException
      */
-    public function run(string $url): VisitedPageCollection
+    private function visit(string $url, ?string $parentUrl = null): VisitedPage
     {
-        $this->emptyCache();
+        $html = $this->client->get($url)->body();
+        $page = new Crawler($html);
 
+        $title = $page->filter('title')->count()
+            ? $page->filter('title')->text()
+            : '';
 
-        $this->visitNested($url);
+        $links = $this->getLinksFromPage($url, $page);
 
-        $result = $this->getCache();
+        return new VisitedPage(
+            url          : $url,
+            title        : $title,
+            html         : $html,
+            prettyHtml   : $this->indenter->indent($html),
+            hash         : crc32($html),
+            parentUrl    : $parentUrl,
+            childrenLinks: $links,
+        );
+    }
 
-        $this->emptyCache();
+    private function getLinksFromPage($url, Crawler $page): Collection
+    {
+        $childrenLinks = $page
+            ->filter($this->getChildrenLinksSelector($url))
+            ->each(fn($link) => UriResolver::resolve($link->attr('href'), $url));
 
-        return $result;
+        return collect($childrenLinks)->filter(fn($link) => $link !== $url);
+    }
+
+    private function getChildrenLinksSelector(string $url): string
+    {
+        $path = parse_url($url, PHP_URL_PATH);
+        return 'a[href^="' . $path . '"]:not([href="' . $path . '"]), a[href^="' . $url . '"]:not([href="' . $url . '"])';
     }
 }

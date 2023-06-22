@@ -7,6 +7,17 @@ use App\Models\PageDump;
 
 class PageDumpService
 {
+    public function dumpPageCollection(VisitedPageCollection $pageCollection): array
+    {
+        $dumps = [];
+
+        foreach ($pageCollection->all() as $page) {
+            $dumps[] = $this->dumpPage($page);
+        }
+
+        return $dumps;
+    }
+
     public function dumpPage(VisitedPage $page): PageDump
     {
         $dump              = new PageDump();
@@ -17,17 +28,6 @@ class PageDumpService
         $dump->save();
 
         return $dump;
-    }
-
-    public function dumpPageCollection(VisitedPageCollection $pageCollection): array
-    {
-        $dumps = [];
-
-        foreach ($pageCollection->all() as $page) {
-            $dumps[] = $this->dumpPage($page);
-        }
-
-        return $dumps;
     }
 }
 

@@ -12,7 +12,7 @@ class VisitedPage
         private readonly string     $html,
         private readonly string     $prettyHtml,
         private readonly string     $hash,
-        private readonly ?string     $parentUrl,
+        private readonly ?string    $parentUrl,
         private readonly Collection $childrenLinks
     )
     {

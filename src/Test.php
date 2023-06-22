@@ -2,9 +2,6 @@
 
 namespace Ditcher;
 
-use Goutte\Client;
-use Symfony\Component\DomCrawler\Crawler;
-
 class Test
 {
     public function test()

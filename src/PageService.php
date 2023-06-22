@@ -6,18 +6,6 @@ use App\Models\Page;
 
 class PageService
 {
-    /**
-     * @param string $url
-     * @return Page
-     */
-    public function firstOrCreate(string $url, string $title): Page
-    {
-        return Page::firstOrCreate(
-            ['url' => $url],
-            ['title' => $title]
-        );
-    }
-
     public function createPageTree(VisitedPageCollection $visitedPages): array
     {
         $pages = [];
@@ -31,12 +19,24 @@ class PageService
 
         foreach ($visitedPages->all() as $visitedPage) {
             if ($visitedPage->getParentUrl()) {
-                $page = $pages[$visitedPage->getUrl()];
+                $page            = $pages[$visitedPage->getUrl()];
                 $page->parent_id = $pages[$visitedPage->getParentUrl()]->id;
                 $page->save();
             }
         }
 
         return $pages;
+    }
+
+    /**
+     * @param string $url
+     * @return Page
+     */
+    public function firstOrCreate(string $url, string $title): Page
+    {
+        return Page::firstOrCreate(
+            ['url' => $url],
+            ['title' => $title]
+        );
     }
 }
