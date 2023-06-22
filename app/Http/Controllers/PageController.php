@@ -35,14 +35,14 @@ class PageController extends Controller
 
     public function dumps($id)
     {
-        $page = Page::findOrFail($id);
+        $page  = Page::findOrFail($id);
         $dumps = PageDump::where('page_id', $id)
             ->latest()
             ->paginate();
 
         return Inertia::render('Pages/Dumps/Index', [
             'dumps' => $dumps,
-            'page' => $page
+            'page'  => $page
         ]);
     }
 

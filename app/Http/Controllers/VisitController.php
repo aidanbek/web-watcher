@@ -30,9 +30,9 @@ class VisitController extends Controller
         DB::beginTransaction();
         try {
             $visitedPages = $this->visitor->run($url);
-            $pages = $this->pageService->createPageTree($visitedPages);
+            $pages        = $this->pageService->createPageTree($visitedPages);
             $this->dumpService->dumpPageCollection($visitedPages);
-            $this->calculator->calculateDiffForPagesDumps($pages);
+            $this->calculator->calculateDiffForPages($pages);
 
             DB::commit();
         } catch (\Exception $e) {
