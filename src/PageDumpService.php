@@ -5,7 +5,7 @@ namespace Ditcher;
 use App\Models\Page;
 use App\Models\PageDump;
 
-class PageDumpService
+final class PageDumpService
 {
     public function dumpPageCollection(VisitedPageCollection $pageCollection): array
     {

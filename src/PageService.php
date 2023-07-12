@@ -4,7 +4,7 @@ namespace Ditcher;
 
 use App\Models\Page;
 
-class PageService
+final class PageService
 {
     public function createPageTree(VisitedPageCollection $visitedPages): array
     {

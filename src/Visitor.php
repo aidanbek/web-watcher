@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\UriResolver;
 
-class Visitor
+final class Visitor
 {
     private VisitedPageCollection $cache;
 

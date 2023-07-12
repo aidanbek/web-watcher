@@ -9,7 +9,7 @@ use App\Models\PageDump;
 use Jfcherng\Diff\DiffHelper;
 use Jfcherng\Diff\Renderer\RendererConstant;
 
-class PlainTextDiffCalculator
+final class PlainTextDiffCalculator
 {
     private const EMPTY_HTML = '';
     private const EMPTY_JSON = '[]';

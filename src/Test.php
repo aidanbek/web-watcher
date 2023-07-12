@@ -2,7 +2,7 @@
 
 namespace Ditcher;
 
-class Test
+final class Test
 {
     public function test()
     {

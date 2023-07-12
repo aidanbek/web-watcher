@@ -2,7 +2,7 @@
 
 namespace Ditcher;
 
-class PageRepository
+final class PageRepository
 {
 
 }

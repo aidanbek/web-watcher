@@ -2,7 +2,7 @@
 
 namespace Ditcher;
 
-class VisitedPageCollection
+final class VisitedPageCollection
 {
     /**
      * @var VisitedPage[]

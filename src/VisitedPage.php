@@ -4,7 +4,7 @@ namespace Ditcher;
 
 use Illuminate\Support\Collection;
 
-class VisitedPage
+final class VisitedPage
 {
     public function __construct(
         private readonly string     $url,
